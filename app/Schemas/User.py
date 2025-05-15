@@ -14,3 +14,13 @@ class User():
         is_active: bool
         class Config:
             orm_mode = True
+
+    class UserResource(UserBase):
+        id: int
+        is_active: bool
+        class Config:
+            orm_mode = True
+
+    class UserLogin(BaseModel):
+        username: str
+        password: str
