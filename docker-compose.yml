@@ -6,10 +6,12 @@ services:
     command: uvicorn app.main:app --reload --host 0.0.0.0 --port 80
     volumes:
       - ./app:/code/app  # Monta o código local para hot-reload
+    env_file:
+      - .env
     ports:
       - "5050:80"
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/fastapi_db
+      - DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@db:5432/fastapi_db}
     depends_on:
       - db
     networks:
@@ -18,10 +20,12 @@ services:
   db:
     image: postgres:13
     container_name: postgres_db
+    env_file:
+      - .env
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=fastapi_db
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-fastapi_db}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
