@@ -14,6 +14,7 @@ services:
       - DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@db:5432/fastapi_db}
     depends_on:
       - db
+      - data_inserter # Adicionado para garantir que a aplicação só inicie após a inserção de dados
     networks:
       - app_network
 
@@ -32,6 +33,23 @@ services:
       - "2345:5432"
     networks:
       - app_network
+
+  data_inserter:
+    build: .
+    depends_on:
+      - db
+    command: >
+      sh -c "/wait-for-it.sh db:5432 --timeout=30 --strict -- 
+             python insert_data.py"
+    volumes:
+      - .:/code
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@db:5432/fastapi_db}
+    networks:
+      - app_network
+    restart: "no" # Garante que este serviço não reinicie após a execução
 
 volumes:
   postgres_data:

@@ -5,10 +5,10 @@ from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
-#projeto recurso
+# projeto recurso
 from .Tables import Users
 from .Actions import Auth 
-from .Schemas import User,NotaSchema
+from .Schemas import User
 from .database import SessionLocal, engine, Base
 
 #token config
@@ -29,23 +29,23 @@ def get_db():
   finally:
       db.close()
 
+#########################################################################################################
 
-#Usuários
+# Usuários
 @app.post("/users/")
 def create_user(user: User.UserCreate, db: Session = Depends(get_db)):
   db_user = Auth.get_user_by_email(db, email=user.email)
   if db_user:
     raise HTTPException(status_code=400, detail="Email already registered")
   return Auth.create_user(db=db, user=user)
-  
 
 @app.get("/users/")
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
   users = Auth.get_users(db, skip=skip, limit=limit)
   return users
-################################################################################################
+#########################################################################################################
 
-#Segurança/authenticação
+# Segurança / authenticação
 @app.post("/token")
 async def login_for_access_token(form_data: User.UserLogin, db: Session = Depends(get_db)):
   db_user = Auth.authenticate_user(db=db, email=form_data.username,password=form_data.password)
@@ -60,8 +60,11 @@ async def current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Sessio
   return JwtAuth.get_current_user(db, token)
   return {"token": token}
 
-#########################################################################################################3
+#########################################################################################################
 
+# Notas
+
+#########################################################################################################
 #rota de teste na raiz
 @app.get("/")
 def read_root():
