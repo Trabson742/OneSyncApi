@@ -1,2 +1,6 @@
+# Ambientes e cache
 .env
-__pycache__
+__pycache__/
+
+# Configurações da IDE
+.idea/

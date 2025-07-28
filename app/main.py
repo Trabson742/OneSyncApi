@@ -9,7 +9,15 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from .Tables import Users
 from .Actions import Auth 
 from .Schemas import User
+from .Schemas import Cliente as ClienteSchema
+from .Actions import Cliente
 from .database import SessionLocal, engine, Base
+
+from app.Schemas.Nota import NotaCreate, NotaOut
+from app.Actions.Nota import create_nota
+
+from app.Schemas.Nota import NotaOut
+from app.Actions.Nota import get_notas
 
 #token config
 from .token import JwtAuth
@@ -63,7 +71,28 @@ async def current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Sessio
 #########################################################################################################
 
 # Notas
+@app.post("/notas/", response_model=NotaOut)
+def create_nota_view(nota: NotaCreate, db: Session = Depends(get_db)):
+  return create_nota(db=db, nota=nota)
 
+@app.get("/notas/", response_model=list[NotaOut])
+def read_notas(
+        cliente_id: int = None,
+        user_id: int = None,
+        ano: str = None,
+        mes: str = None,
+        db: Session = Depends(get_db)
+):
+  return get_notas(db=db, cliente_id=cliente_id, user_id=user_id, ano=ano, mes=mes)
+#########################################################################################################
+# Clientes
+@app.post("/clientes/")
+def create_cliente(cliente: ClienteSchema.ClienteCreate, db: Session = Depends(get_db)):
+  return Cliente.create_cliente(db=db, cliente=cliente)
+
+@app.get("/clientes/")
+def read_clientes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+  return Cliente.get_clientes(db, skip=skip, limit=limit)
 #########################################################################################################
 #rota de teste na raiz
 @app.get("/")

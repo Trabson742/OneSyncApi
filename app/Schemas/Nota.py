@@ -1,15 +1,21 @@
 from pydantic import BaseModel
-from .Cliente import ClienteCreate
+from datetime import date
 
 class NotaBase(BaseModel):
-    score: int
     tipo: str
+    valor: str
+    mes: str
+    ano: str
+    createdAt: date
 
 class NotaCreate(NotaBase):
-    Cliente: ClienteCreate
+    cliente_id: int
+    user_id: int
 
-# class User(UserBase):
-#     id: int
-#     is_active: bool
-#     class Config:
-#         orm_mode = True
+class NotaOut(NotaBase):
+    id: int
+    cliente_id: int
+    user_id: int
+
+    class Config:
+        from_attributes = True
