@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from .ClienteSchema import ClienteCreate
+from .Cliente import ClienteCreate
 
 class NotaBase(BaseModel):
     score: int
