@@ -12,3 +12,4 @@ class Users(Base):
     name = Column(String)
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
+    notas = relationship("Notas")

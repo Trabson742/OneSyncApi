@@ -16,3 +16,4 @@ class Clientes(Base):
     celular = Column(String)
     user_id = mapped_column(ForeignKey("users.id"))
     user = relationship("Users")
+    notas = relationship("Notas")
