@@ -7,17 +7,15 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 # projeto recurso
 from .Tables import Users
-from .Actions import Auth 
-from .Schemas import User
-from .Schemas import Cliente as ClienteSchema
-from .Actions import Cliente
+from .Actions import Auth, Cliente, Nota
+# from .Actions import Cliente
 from .database import SessionLocal, engine, Base
 
-from app.Schemas.Nota import NotaCreate, NotaOut
-from app.Actions.Nota import create_nota
+from .Schemas import UserSchema,NotaSchema,ClienteSchema
 
-from app.Schemas.Nota import NotaOut
-from app.Actions.Nota import get_notas
+# from app.Actions.Nota import create_nota
+
+# from app.Actions.Nota import get_notas
 
 #token config
 from .token import JwtAuth
@@ -41,7 +39,7 @@ def get_db():
 
 # Usuários
 @app.post("/users/")
-def create_user(user: User.UserCreate, db: Session = Depends(get_db)):
+def create_user(user: UserSchema.UserCreate, db: Session = Depends(get_db)):
   db_user = Auth.get_user_by_email(db, email=user.email)
   if db_user:
     raise HTTPException(status_code=400, detail="Email already registered")
@@ -55,7 +53,7 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 
 # Segurança / authenticação
 @app.post("/token")
-async def login_for_access_token(form_data: User.UserLogin, db: Session = Depends(get_db)):
+async def login_for_access_token(form_data: UserSchema.UserLogin, db: Session = Depends(get_db)):
   db_user = Auth.authenticate_user(db=db, email=form_data.username,password=form_data.password)
   if db_user is False:
     raise HTTPException(status_code=400, detail="Incorrect email or password")
@@ -63,7 +61,7 @@ async def login_for_access_token(form_data: User.UserLogin, db: Session = Depend
   return {"access_token": access_token, "token_type": "bearer"}
 
 
-@app.get("/me/",response_model=User.UserResource)
+@app.get("/me/",response_model=UserSchema.UserResource)
 async def current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
   return JwtAuth.get_current_user(db, token)
   return {"token": token}
@@ -71,11 +69,11 @@ async def current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Sessio
 #########################################################################################################
 
 # Notas
-@app.post("/notas/", response_model=NotaOut)
-def create_nota_view(nota: NotaCreate, db: Session = Depends(get_db)):
-  return create_nota(db=db, nota=nota)
+@app.post("/notas/", response_model=NotaSchema.NotaOut)
+def create_nota_view(nota: NotaSchema.NotaCreate, db: Session = Depends(get_db)):
+  return Nota.create_nota(db=db, nota=nota)
 
-@app.get("/notas/", response_model=list[NotaOut])
+@app.get("/notas/", response_model=list[NotaSchema.NotaOut])
 def read_notas(
         cliente_id: int = None,
         user_id: int = None,
@@ -83,7 +81,7 @@ def read_notas(
         mes: str = None,
         db: Session = Depends(get_db)
 ):
-  return get_notas(db=db, cliente_id=cliente_id, user_id=user_id, ano=ano, mes=mes)
+  return Nota.get_notas(db=db, cliente_id=cliente_id, user_id=user_id, ano=ano, mes=mes)
 #########################################################################################################
 # Clientes
 @app.post("/clientes/")
