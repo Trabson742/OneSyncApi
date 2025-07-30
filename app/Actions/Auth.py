@@ -3,7 +3,7 @@ from sqlalchemy import select
 
 from ..Tables import Users,Clientes
 
-from ..Schemas import User
+from ..Schemas import UserSchema
 
 from passlib.context import CryptContext
 
@@ -38,7 +38,7 @@ def get_user_by_email(db: Session, email: str):
 def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Users).offset(skip).limit(limit).all()
 
-def create_user(db: Session, user: User.UserCreate):
+def create_user(db: Session, user: UserSchema.UserCreate):
     hashed_password = hash_password(user.password)
     db_user = Users(
     email=user.email,

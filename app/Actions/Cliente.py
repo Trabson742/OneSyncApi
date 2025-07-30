@@ -2,9 +2,9 @@
 
 from sqlalchemy.orm import Session
 from app.Tables import Clientes as ClienteModel
-from ..Schemas.Cliente import ClienteCreate
+from ..Schemas import ClienteSchema
 
-def create_cliente(db: Session, cliente: ClienteCreate):
+def create_cliente(db: Session, cliente: ClienteSchema.ClienteCreate):
     db_cliente = ClienteModel(**cliente.dict())
     db.add(db_cliente)
     db.commit()
