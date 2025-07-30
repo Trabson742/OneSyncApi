@@ -1,5 +1,5 @@
-from .Clientes import Clientes
-from .Notas import Notas
-from .Users import User
+from .ClienteSchema import ClienteSchema
+from .NotaSchema import NotaSchema
+from .UserSchema import UserSchema
 
-__all__ = ["Cliente", "Notas", "User"]
+__all__ = ["ClienteSchema", "NotaSchema", "UserSchema"]

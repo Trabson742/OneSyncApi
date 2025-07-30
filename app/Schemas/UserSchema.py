@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-class User():
+class UserSchema():
     class UserBase(BaseModel):
         email: str
 
