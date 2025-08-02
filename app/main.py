@@ -99,7 +99,3 @@ def read_clientes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 @app.get("/")
 def read_root():
   return {"Hello": "World"}
-
-@app.get("/teste")
-def read_root():
-  return {"teste": "sucesso"}
