@@ -2,20 +2,15 @@ from typing import Union, Annotated
 from datetime import datetime, timedelta
 
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 # projeto recurso
 from .Tables import Users
 from .Actions import Auth, Cliente, Nota
-# from .Actions import Cliente
 from .database import SessionLocal, engine, Base
-
 from .Schemas import UserSchema,NotaSchema,ClienteSchema
-
-# from app.Actions.Nota import create_nota
-
-# from app.Actions.Nota import get_notas
 
 #token config
 from .token import JwtAuth
@@ -25,6 +20,14 @@ from uuid import uuid4
 #config
 Base.metadata.create_all(engine)
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,  # Allow cookies and authorization headers
+    allow_methods=["*"],     # Allow all HTTP methods (e.g., GET, POST, PUT, DELETE)
+    allow_headers=["*"],     # Allow all headers
+)
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 # Dependency
