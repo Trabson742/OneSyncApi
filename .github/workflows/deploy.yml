@@ -1,0 +1,26 @@
+name: Deploy to Oracle Cloud VM
+
+on:
+  push:
+    branches: [ "main" ]  # Trigger no push para a branch main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install SSH Key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+
+    - name: Execute Deploy Script
+      run: |
+        ssh -o StrictHostKeyChecking=no \
+            -i ~/.ssh/id_rsa \
+            ubuntu@${{ secrets.VM_IP }} \
+            "cd ~/OneSyncApi && \
+             sudo ./scripts/deploy.sh"
