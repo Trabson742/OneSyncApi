@@ -98,4 +98,4 @@ def read_clientes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 #rota de teste na raiz
 @app.get("/")
 def read_root():
-  return {"Hello": "teste"}
+  return {"Hello": "World"}
